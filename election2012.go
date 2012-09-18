@@ -1,7 +1,7 @@
 //
 // election2012.go
 //
-// $ go run election2012.go api.go states.go
+// $ go run election2012.go states.go api.go cumDist.go 
 //
 // wget -O - 'http://elections.huffingtonpost.com/pollster/api/polls.json?topic=2012-president&state=OH' | underscore print --color
 //
@@ -11,9 +11,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
+	"math/rand"
 	"os"
 	"strings"
 )
+
+const acceptableSize = 1000
+const numSimulations = 10000
 
 type Sim struct {
 	state  string
@@ -94,8 +99,8 @@ func parsePoll(state string, poll Poll) (obama, romney, size int) {
 	return
 }
 
-func loadSimulations(state string, polls []Poll) Sim {
-	sim := Sim{state, 0, 0, 0}
+func loadSimulations(state string, polls []Poll) (sim Sim) {
+	sim.state = state
 	for _, poll := range polls {
 
 		// skip systemically biased polls
@@ -109,6 +114,7 @@ func loadSimulations(state string, polls []Poll) Sim {
 		// 	fmt.Printf(" parsing error for date '%v'. Error: %v\n", poll.End_date, err)
 		// 	continue
 		// }
+		// fmt.Printf("date: %v\n", poll.End_date)
 
 		var obama, romney, size int
 		obama, romney, size = parsePoll(state, poll)
@@ -119,12 +125,43 @@ func loadSimulations(state string, polls []Poll) Sim {
 		}
 		// fmt.Printf(" adding O(%v), R(%v), N(%v)\n", obama, romney, size)
 		sim.update(obama, romney, size)
+		if sim.N > acceptableSize {
+			fmt.Printf("%v: Obama=%v, Romney=%v, N=%v\n", state, sim.Obama, sim.Romney, sim.N)
+			return
+		}
 	}
-	return sim
+	return
 }
 
-func doSimulation(simulations []Sim) {
-
+// http://www.richardcharnin.com/MonteCarloPollingSimulation.htm
+// https://en.wikipedia.org/wiki/Margin_of_error
+//
+// Margin of error = Critical value x Standard deviation
+// Margin of error = 1.96 * standard deviation
+// Margin of error = 0.98 / Sqrt(N)
+// standard deviation = σ = Sqrt(var)
+// σ = MoE / 1.96 = 0.98 / Sqrt(N) / 1.96 = 1 / (2*Sqrt(N))
+func doSimulation(simulations []Sim) int {
+	votes := 0
+	for _, sim := range simulations {
+		state := sim.state
+		if sim.N == 0 {
+			// give state to 2008 winner
+			if states[state].dem2008 {
+				votes += states[state].votes
+			}
+		} else {
+			obamaPerc := float64(sim.Obama) / float64(sim.N)
+			σ := 1.0 / 2.0 / math.Sqrt(float64(sim.N))
+			prObama := prOverX(0.50, obamaPerc, σ)
+			if rand.Float64() < prObama {
+				votes += states[state].votes
+			}
+			// fmt.Printf("%v, O%%=%6.4f, σ=%6.4f, Pr(Obama)=%6.4f, votes=%d\n",
+			// 	state, obamaPerc, σ, prObama, votes)
+		}
+	}
+	return votes
 }
 
 func main() {
@@ -147,6 +184,17 @@ func main() {
 
 	fmt.Printf("num simulations: %v\n", len(simulations))
 
-	doSimulation(simulations)
+	wins := 0
+	totalVotes := 0
+	for i := 0; i < numSimulations; i++ {
+		votes := doSimulation(simulations)
+		totalVotes += votes
+		if votes >= 270 {
+			wins++
+		}
+		//fmt.Printf("Obama votes = %v\n", votes)
+	}
+	fmt.Printf("Obama wins %.2f%%. Avg votes %.2f\n", 100.0*float64(wins)/float64(numSimulations),
+		float64(totalVotes)/float64(numSimulations))
 
 }

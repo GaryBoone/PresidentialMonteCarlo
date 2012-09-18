@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?topic=2012-president&state="
+const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?sort=updated&topic=2012-president&state="
 
 type Responses struct {
 	Choice     *string
