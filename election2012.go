@@ -17,8 +17,8 @@ import (
 	"strings"
 )
 
-const acceptableSize = 1000
-const numSimulations = 10000
+const acceptableSize = 2000
+const numSimulations = 25000
 
 type Sim struct {
 	state  string
@@ -152,7 +152,7 @@ func doSimulation(simulations []Sim) int {
 			}
 		} else {
 			obamaPerc := float64(sim.Obama) / float64(sim.N)
-			σ := 1.0 / 2.0 / math.Sqrt(float64(sim.N))
+			σ := math.Sqrt((obamaPerc - obamaPerc*obamaPerc) / float64(sim.N))
 			prObama := prOverX(0.50, obamaPerc, σ)
 			if rand.Float64() < prObama {
 				votes += states[state].votes
@@ -188,10 +188,10 @@ func main() {
 	totalVotes := 0
 	for i := 0; i < numSimulations; i++ {
 		votes := doSimulation(simulations)
-		totalVotes += votes
 		if votes >= 270 {
 			wins++
 		}
+		totalVotes += votes
 		//fmt.Printf("Obama votes = %v\n", votes)
 	}
 	fmt.Printf("Obama wins %.2f%%. Avg votes %.2f\n", 100.0*float64(wins)/float64(numSimulations),
