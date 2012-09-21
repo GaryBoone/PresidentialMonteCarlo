@@ -11,6 +11,7 @@ import (
 	"net/http"
 )
 
+// sort polls by most recent first so we use the most recent data
 const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?sort=updated&topic=2012-president&state="
 
 type Responses struct {
@@ -49,7 +50,7 @@ type Poll struct {
 	Id            int
 	Pollster      *string
 	Start_date    *string
-	End_date      string
+	End_date      *string
 	Method        *string
 	Source        *string
 	Last_updated  *string
