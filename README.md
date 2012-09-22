@@ -30,3 +30,10 @@ First, you need to understand that the national polling reported in the media is
 Second, you need to understand that if the polls are 52% Obama in a state with a margin of error of 4%, then Obama is 69% likely to win that state. You might think that 52% Obama in the polling means that he's 52% percent likely to win the state. But that's not how the statistics work. If you have a coin that comes out heads 52% of the time with a 4% margin of error, then that means that the probability of exceeding 50% is about 70%. To see this, go to a cumulative distribution function calculator such as http://www.danielsoper.com/statcalc3/calc.aspx?id=53 and plug in 52, 5, 50 and then calculate 1 - the answer given. In Obama's case, exceeding 50% is a win for that state. It turns out to have a probability of ~70%. 
 
 Finally, realize that there is more certainty available in the data than is described in the polls. That's because 1) the electoral college elects presidents and 2) there are only so many ways that the electoral college can add up to a win for either candidate. For example, CA, HI, and NY will almost certainly vote for Obama; no need to poll in those states. That's why we talk about swing states; they can change the outcome. But there are only a limited number of ways the swing states can combine to a victory for one candidate or the other. As it turns out, the current polling makes these combinations favor Obama. It's nearly impossible for swing states to combine in ways that add up to a Romney win.
+
+
+## Poll Data Source ##
+
+The state-by-state presidential polling data is provided by the Pollster API:
+
+   http://elections.huffingtonpost.com/pollster/api
