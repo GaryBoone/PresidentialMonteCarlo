@@ -1,4 +1,3 @@
-
 election2012.go is a Monte Carlo simulator of the 2012 presidential election written in Go. 
 * It reads polling data from the Huffington Post API.
 * It ignores Rasmussen polls (http://fivethirtyeight.blogs.nytimes.com/2010/11/04/rasmussen-polls-were-biased-and-inaccurate-quinnipiac-surveyusa-performed-strongly/)
