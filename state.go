@@ -1,7 +1,7 @@
 // 
 // state.go
 // 
-// 
+
 package main
 
 import (
@@ -53,6 +53,14 @@ func (s *StateProbability) simulateElection() int {
 }
 
 func (s *StateProbability) logStateProbability() {
-	log.Printf("%v: Obama%%=%6.4f, votes=%d, σ=%6.4f --> Pr(Obama)=%6.4f\n",
-		s.state, s.obamaPerc, int(s.N), s.σ, s.ObamaProbability)
+	if s.N != 0 {
+		log.Printf("  %v: Obama polling=%6.4f, N=%d, σ=%6.4f --> Pr(Obama)=%6.4f\n",
+			s.state, s.obamaPerc, int(s.N), s.σ, s.ObamaProbability)
+	} else {
+		if college[s.state].dem2008 {
+			log.Printf("  %s voted Democratic in 2008.\n", s.state)
+		} else {
+			log.Printf("  %s voted Republican in 2008.\n", s.state)
+		}
+	}
 }

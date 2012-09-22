@@ -1,9 +1,9 @@
 //
 // cumDist_test.go
 //
-// go test election2012.go states.go api.go cumDist.go cumDist_test.go
+// go test election2012.go state.go api.go cumDist.go parse.go college.go cumDist_test.go
 //
-//
+
 package main
 
 import (

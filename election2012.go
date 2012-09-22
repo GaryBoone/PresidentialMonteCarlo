@@ -38,7 +38,14 @@ func initializeLog() {
 		fmt.Printf("can't open file: %v\n", err)
 	}
 	log.SetOutput(f)
-	log.Printf(" Stop adding new polls when we have more than %v samples.", acceptableSize)
+	log.Printf("Stop adding new polls when we have more than %v samples.", acceptableSize)
+}
+
+func truncateString(inStr string, length int) string {
+	if len(inStr) < length || length < 4 {
+		return inStr
+	}
+	return inStr[:length-3] + "..."
 }
 
 func loadStateData(state string, polls []Poll) (prob StateProbability) {
@@ -57,12 +64,13 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 		var obama, romney, size int
 		obama, romney, size = parsePoll(state, poll)
 		if obama == 0 || romney == 0 {
-			log.Printf("Missing value (Obama=%v, Romney=%v) for %v state poll by '%v'. Skipping.\n",
+			log.Printf("  Missing value (Obama=%v, Romney=%v) for %v state poll by '%v'. Skipping.\n",
 				obama, romney, state, *poll.Pollster)
 			continue
 		}
 
-		log.Printf(" adding %-20s, %10s : O(%v), R(%v), N(%v)\n", pollster, date, obama, romney, size)
+		log.Printf("  adding %-30s %10s : O(%v), R(%v), N(%v)\n",
+			truncateString(pollster, 30), date[:10], obama, romney, size)
 		prob.update(obama, romney, size)
 		if prob.N > acceptableSize {
 			return
@@ -92,7 +100,7 @@ func initializeSimulations() []StateProbability {
 		i++
 		body := readPollingApi(state)
 		polls := parseJson(body)
-		log.Printf("  Found %v polls in %v.\n", len(polls), state)
+		log.Printf("Found %v polls in %v.\n", len(polls), state)
 		prob := loadStateData(state, polls)
 		prob.logStateProbability()
 		stateProbalities = append(stateProbalities, prob)

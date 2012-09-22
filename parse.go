@@ -12,12 +12,12 @@ import (
 func parseResponses(state string, poll Poll, responses []Responses) (obama, romney int) {
 	for _, resp := range responses {
 		if resp.Choice == nil {
-			log.Printf("No Choice for %v state poll by '%v'. Skipping.\n",
+			log.Printf("  No Choice for %v state poll by '%v'. Skipping.\n",
 				state, *poll.Pollster)
 			continue
 		}
 		if resp.Value == nil {
-			log.Printf("No Value for %v state poll by '%v'. Skipping.\n",
+			log.Printf("  No Value for %v state poll by '%v'. Skipping.\n",
 				state, *poll.Pollster)
 			continue
 		}
@@ -33,7 +33,7 @@ func parseResponses(state string, poll Poll, responses []Responses) (obama, romn
 
 func parseSubpopulation(state string, poll Poll, sub Subpopulations) (obama, romney, size int) {
 	if sub.Observations == nil {
-		log.Printf("No N for %v state poll by '%v'. Skipping.\n",
+		log.Printf("  No N for %v state poll by '%v'. Skipping.\n",
 			state, *poll.Pollster)
 		return
 	}
@@ -75,7 +75,7 @@ func parsePoll(state string, poll Poll) (obama, romney, size int) {
 					}
 				}
 				if !foundLikelyVoters {
-					log.Printf("No Likely voters in multi-subpopulation poll for "+
+					log.Printf("  No Likely voters in multi-subpopulation poll for "+
 						"%v state poll by '%v'. Skipping.\n", state, *poll.Pollster)
 				}
 			}

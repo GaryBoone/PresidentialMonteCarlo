@@ -1,7 +1,7 @@
 //
 // college.go
 // 
-// 
+
 package main
 
 type College struct {
