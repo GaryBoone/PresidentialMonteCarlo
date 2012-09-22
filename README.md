@@ -41,7 +41,7 @@ The state-by-state presidential polling data is provided by the Pollster API:
 
 ## Sources of Error ##
 
-* Polling data is combined by treating multiple polls as a single large poll.
+* Polling data is combined by pooling multiple polls as a single large poll.
 * Undecides and Others are ignored. For Others, that's not a bad assumption, as the contest 
 * remains a two-person contest among the two leaders. For Undecideds, it implies that they'll allocate themselves according to the current proportions for each candidate. But historically, late deciders favor challengers.
 * Only state-by-state polling data is considered. Professional modelers, such as the Nate Silver at the excellent FiveThirtyEight blog (http://fivethirtyeight.blogs.nytimes.com/) consider many other factors, adjustments, and trendlines as well. See http://fivethirtyeight.blogs.nytimes.com/methodology/ .
