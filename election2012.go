@@ -94,6 +94,7 @@ func initializeSimulations() []StateProbability {
 		polls := parseJson(body)
 		log.Printf("  Found %v polls in %v.\n", len(polls), state)
 		prob := loadStateData(state, polls)
+		prob.logStateProbability()
 		stateProbalities = append(stateProbalities, prob)
 	}
 	fmt.Printf(".\n")

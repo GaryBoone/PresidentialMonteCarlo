@@ -5,6 +5,7 @@
 package main
 
 import (
+	"log"
 	"math"
 	"math/rand"
 )
@@ -14,6 +15,8 @@ type StateProbability struct {
 	Obama            float64
 	Romney           float64
 	N                float64
+	obamaPerc        float64
+	σ                float64
 	ObamaProbability float64
 }
 
@@ -30,12 +33,9 @@ func (s *StateProbability) update(oPerc, rPerc, pollSize int) {
 	s.Romney += romneyVotes
 	s.N += obamaVotes + romneyVotes
 
-	obamaPerc := s.Obama / s.N
-	σ := math.Sqrt((obamaPerc - obamaPerc*obamaPerc) / s.N)
-	s.ObamaProbability = prOverX(0.50, obamaPerc, σ)
-
-	// fmt.Printf("%v, O%%=%6.4f, σ=%6.4f, Pr(Obama)=%6.4f, votes=%d\n",
-	// 	s.state, obamaPerc, σ, s.ObamaProbability, s.N)
+	s.obamaPerc = s.Obama / s.N
+	s.σ = math.Sqrt((s.obamaPerc - s.obamaPerc*s.obamaPerc) / s.N)
+	s.ObamaProbability = prOverX(0.50, s.obamaPerc, s.σ)
 }
 
 func (s *StateProbability) simulateElection() int {
@@ -50,4 +50,9 @@ func (s *StateProbability) simulateElection() int {
 		}
 	}
 	return 0
+}
+
+func (s *StateProbability) logStateProbability() {
+	log.Printf("%v: Obama%%=%6.4f, votes=%d, σ=%6.4f --> Pr(Obama)=%6.4f\n",
+		s.state, s.obamaPerc, int(s.N), s.σ, s.ObamaProbability)
 }
