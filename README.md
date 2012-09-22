@@ -8,6 +8,7 @@ election2012.go is a Monte Carlo simulator of the 2012 presidential election wri
 ## Usage ##
 
 To run:
+
 	$ go run election2012.go state.go api.go cumDist.go parse.go college.go
 
 or
