@@ -4,7 +4,7 @@
 // An electoral college Monte Carlo simulation based on 2012 presidential polling.
 //
 // To run:
-//   $ go run election2012.go state.go api.go cumDist.go parse.go college.go
+//   $ go run election2012.go state.go api.go cdf.go parse.go college.go
 //
 // Author:     Gary Boone     gary.boone@gmail.com
 // History:    2012-09-17     • initial version
