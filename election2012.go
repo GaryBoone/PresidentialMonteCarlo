@@ -26,6 +26,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -146,14 +147,10 @@ func runSimulations(stateProbalities []StateProbability) (int, int) {
 
 // Let's say election day begins on midnight Eastern Time on Nov 6, 2012
 func daysUntilElection() int {
-	location, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		log.Println("*** problem loading timezone information. Using UTC. ***")
-		location = time.UTC
-	}
-	now := time.Now().In(location)
-	electionDay := time.Date(2012, time.November, 6, 0, 0, 0, 0, location).In(location)
-	return int(electionDay.Sub(now) / (24 * 60 * 60 * 1000000000))
+	now := time.Now()
+	// Midnight Nov 6 is Eastern Standard Time, not DST, so 5 hours behind UTC
+	electionDay := time.Date(2012, time.November, 6, 5, 0, 0, 0, time.UTC)
+	return int(math.Ceil(float64(electionDay.Sub(now)) / (24 * 60 * 60 * 1000000000.0)))
 }
 
 func main() {
