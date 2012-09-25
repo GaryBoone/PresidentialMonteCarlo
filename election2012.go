@@ -30,6 +30,7 @@ import (
 )
 
 const acceptableSize = 2000
+const min_σ = 0.04
 const numSimulations = 25000
 
 func initializeLog() {
