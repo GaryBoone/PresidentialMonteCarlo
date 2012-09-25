@@ -35,7 +35,7 @@ func (s *StateProbability) update(oPerc, rPerc, pollSize int) {
 
 	s.obamaPerc = s.Obama / s.N
 	s.σ = math.Sqrt((s.obamaPerc - s.obamaPerc*s.obamaPerc) / s.N)
-	if s.σ < min_σ {
+	if min_σ != 0.0 && s.σ < min_σ {
 		s.σ = min_σ
 	}
 	s.ObamaProbability = prOverX(0.50, s.obamaPerc, s.σ)

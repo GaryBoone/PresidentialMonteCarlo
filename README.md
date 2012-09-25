@@ -16,6 +16,17 @@ or
 	$ go build election2012.go state.go api.go cumDist.go parse.go college.go
 	$ ./election2012
 
+Try:
+
+	$ ./election2012 -minStdDev 0.05
+  
+    $ ./election2012 -minStdDev 0.07 -acceptableSize 4000 -sims 50000
+    Election 2012 Monte Carlo Simulation
+
+    Collecting survey data for the great state of WA, WY, WV, PA, UT, NV, NY, NC, NE, ND, NH, NJ, NM, SD, SC, LA, OR, OK, OH, HI, MT, MS, MD, ME, MA, MN, MO, MI, FL, KS, KY, DC, DE, IL, IN, IA, ID, GA, CT, CO, CA, VA, VT, TN, AK, AL, TX, AR, AZ, RI, WI.
+
+    Obama win probability: 84.59%. Average votes: 305.80
+
 For additional details about the data that was gathered and the simulation, see the the logfile.
 
 	$ less logfile

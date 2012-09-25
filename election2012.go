@@ -23,15 +23,30 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
-const acceptableSize = 2000
-const min_σ = 0.04
-const numSimulations = 25000
+var (
+	acceptableSize int
+	numSimulations int
+	min_σ          float64
+)
+
+func init() {
+	const (
+		acceptableSizeDefault = 2000
+		numSimulationsDefault = 25000
+		min_σDefault          = 0.0
+	)
+	flag.IntVar(&acceptableSize, "acceptableSize", acceptableSizeDefault,
+		"Don't add more polls after this many samples are obtained")
+	flag.IntVar(&numSimulations, "sims", numSimulationsDefault, "number of simulations to run")
+	flag.Float64Var(&min_σ, "minStdDev", min_σDefault, "minimum standard deviation")
+}
 
 func initializeLog() {
 	f, err := os.Create("logfile")
@@ -39,7 +54,12 @@ func initializeLog() {
 		fmt.Printf("can't open file: %v\n", err)
 	}
 	log.SetOutput(f)
-	log.Printf("Stop adding new polls when we have more than %v samples.", acceptableSize)
+	log.Println("Simulation Parameters:")
+	log.Printf("  Stop adding new polls when we have more than %v samples. "+
+		"(param: -acceptableSize x)\n", acceptableSize)
+	log.Printf("  Run %v simulations. (param: -numSimulations x)\n", numSimulations)
+	log.Printf("  Don't allow the standard deviation to shrink below %v. "+
+		"(0=no limit, param: -minStdDev x)\n", min_σ)
 }
 
 func truncateString(inStr string, length int) string {
@@ -73,7 +93,7 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 		log.Printf("  adding %-30s %10s : O(%v), R(%v), N(%v)\n",
 			truncateString(pollster, 30), date[:10], obama, romney, size)
 		prob.update(obama, romney, size)
-		if prob.N > acceptableSize {
+		if prob.N > float64(acceptableSize) {
 			return
 		}
 	}
@@ -124,6 +144,7 @@ func runSimulations(stateProbalities []StateProbability) (int, int) {
 }
 
 func main() {
+	flag.Parse()
 	initializeLog()
 
 	fmt.Println("Election 2012 Monte Carlo Simulation\n")
