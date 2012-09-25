@@ -28,6 +28,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
@@ -143,14 +144,28 @@ func runSimulations(stateProbalities []StateProbability) (int, int) {
 	return wins, totalVotes
 }
 
+// Let's say election day begins on midnight Eastern Time on Nov 6, 2012
+func daysUntilElection() int {
+	location, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Println("*** problem loading timezone information. Using UTC. ***")
+		location = time.UTC
+	}
+	now := time.Now().In(location)
+	electionDay := time.Date(2012, time.November, 6, 0, 0, 0, 0, location).In(location)
+	return int(electionDay.Sub(now) / (24 * 60 * 60 * 1000000000))
+}
+
 func main() {
 	flag.Parse()
 	initializeLog()
 
-	fmt.Println("Election 2012 Monte Carlo Simulation\n")
-	stateProbalities := initializeSimulations()
+	fmt.Println("Election 2012 Monte Carlo Simulation")
+	fmt.Printf("There are %v days until the election.\n\n", daysUntilElection())
 
+	stateProbalities := initializeSimulations()
 	wins, totalVotes := runSimulations(stateProbalities)
+
 	fmt.Printf("\nObama win probability: %.2f%%. Average votes: %.2f\n", 100.0*float64(wins)/float64(numSimulations),
 		float64(totalVotes)/float64(numSimulations))
 
