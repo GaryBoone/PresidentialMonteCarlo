@@ -28,6 +28,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -103,16 +104,16 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 }
 
 // for each state, flip a coin
-func simulateObamaVotes(stateProbalities []StateProbability) int {
+func simulateObamaVotes(states []StateProbability) int {
 	votes := 0
-	for _, prob := range stateProbalities {
-		votes += prob.simulateElection()
+	for _, state := range states {
+		votes += state.simulateElection()
 	}
 	return votes
 }
 
 func initializeSimulations() []StateProbability {
-	var stateProbalities []StateProbability
+	var stateProbabilities []StateProbability
 	i := 0
 	for state, _ := range college {
 		if i == 0 {
@@ -126,23 +127,44 @@ func initializeSimulations() []StateProbability {
 		log.Printf("Found %v polls in %v.\n", len(polls), state)
 		prob := loadStateData(state, polls)
 		prob.logStateProbability()
-		stateProbalities = append(stateProbalities, prob)
+		stateProbabilities = append(stateProbabilities, prob)
 	}
 	fmt.Printf(".\n")
-	return stateProbalities
+	return stateProbabilities
 }
 
-func runSimulations(stateProbalities []StateProbability) (int, int) {
-	wins := 0
-	totalVotes := 0
-	for i := 0; i < numSimulations; i++ {
-		votes := simulateObamaVotes(stateProbalities)
+type Result struct {
+	votes, wins int
+}
+
+func doSome(n int, probs []StateProbability, c chan Result) {
+	var voteSum, winSum int
+	for i := 0; i < n; i++ {
+		votes := simulateObamaVotes(probs)
 		if votes >= 270 {
-			wins++
+			winSum++
 		}
-		totalVotes += votes
+		voteSum += votes
 	}
-	return wins, totalVotes
+	c <- Result{voteSum, winSum}
+}
+
+func runSimulations(probs []StateProbability) (int, int) {
+	nCPU := runtime.NumCPU()
+	log.Printf("Using %v CPUs.\n", nCPU)
+	runtime.GOMAXPROCS(nCPU)
+	c := make(chan Result, nCPU)
+	for i := 0; i < nCPU; i++ {
+		go doSome(numSimulations/nCPU, probs, c)
+	}
+
+	var wins, votes int
+	for i := 0; i < nCPU; i++ {
+		res := <-c
+		votes += res.votes
+		wins += res.wins
+	}
+	return wins, votes
 }
 
 // Let's say election day begins on midnight Eastern Time on Nov 6, 2012
