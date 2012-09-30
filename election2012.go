@@ -9,6 +9,10 @@
 // Author:     Gary Boone     gary.boone@gmail.com
 // History:    2012-09-17     • initial version
 //             2012-09-21     • cleanup, upload to github
+//             2012-09-24     • minimum σ
+//                            • command line parameters
+//                            • days until election countdown
+//             2012-09-25     • simulations in parallel
 // Notes:
 //
 // The state-by-state presidential polling data is provided by the Pollster API:
@@ -43,7 +47,7 @@ func init() {
 	const (
 		acceptableSizeDefault = 2000
 		numSimulationsDefault = 25000
-		min_σDefault          = 0.0
+		min_σDefault          = 0.0 // 0.0 => no minimum
 	)
 	flag.IntVar(&acceptableSize, "acceptableSize", acceptableSizeDefault,
 		"Don't add more polls after this many samples are obtained")

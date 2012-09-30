@@ -9,11 +9,11 @@ election2012.go is a Monte Carlo simulator of the 2012 presidential election wri
 
 To run:
 
-	$ go run election2012.go state.go api.go cumDist.go parse.go college.go
+	$ go run election2012.go state.go api.go cdf.go parse.go college.go
 
 or
 
-	$ go build election2012.go state.go api.go cumDist.go parse.go college.go
+	$ go build election2012.go state.go api.go cdf.go parse.go college.go
 	$ ./election2012
 
 Try:
