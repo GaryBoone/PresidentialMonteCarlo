@@ -60,6 +60,9 @@ type Poll struct {
 	Questions     []Question
 }
 
+// readPollingApi reads the data from the Pollster API. Note: these requests could be
+// parallelized easily, but that would potentially slam the API servers. Instead, 
+// be a good user and request the data serially. We could add a delay between requests... 
 func readPollingApi(state string) []byte {
 	resp, err := http.Get(apiUrl + state)
 	if err != nil {
@@ -70,7 +73,6 @@ func readPollingApi(state string) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println(string(body))
 	return body
 }
 
