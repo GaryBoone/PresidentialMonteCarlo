@@ -116,22 +116,33 @@ func simulateObamaVotes(states []StateProbability) int {
 	return votes
 }
 
+func loadProbability(state string) StateProbability {
+	body := readPollingApi(state)
+	polls := parseJson(body)
+	log.Printf("Found %v polls in %v.\n", len(polls), state)
+	prob := loadStateData(state, polls)
+	prob.logStateProbability()
+	return prob
+}
+
 func initializeSimulations() []StateProbability {
-	var stateProbabilities []StateProbability
-	i := 0
+	results := make(chan StateProbability)
+	// kick off all the polls
 	for state, _ := range college {
+		go func(state string) {
+			results <- loadProbability(state)
+		}(state)
+	}
+
+	stateProbabilities := make([]StateProbability, len(college))
+	for i := range stateProbabilities {
+		prob := <-results
+		stateProbabilities[i] = prob
 		if i == 0 {
-			fmt.Printf("Collecting survey data for the great state of %v", state)
+			fmt.Printf("Collecting survey data for the great state of %v", prob.state)
 		} else {
-			fmt.Printf(", %v", state)
+			fmt.Printf(", %v", prob.state)
 		}
-		i++
-		body := readPollingApi(state)
-		polls := parseJson(body)
-		log.Printf("Found %v polls in %v.\n", len(polls), state)
-		prob := loadStateData(state, polls)
-		prob.logStateProbability()
-		stateProbabilities = append(stateProbabilities, prob)
 	}
 	fmt.Printf(".\n")
 	return stateProbabilities
