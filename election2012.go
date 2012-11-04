@@ -204,7 +204,7 @@ func main() {
 	fmt.Println("\nSwing States:")
 	for _, st := range stateProbalities {
 		if strings.Contains(swingStates, st.state) {
-			fmt.Printf("Probability of Obama winning %v: %4.2f%%\n", st.state, st.ObamaProbability)
+			fmt.Printf("Probability of Obama winning %v: %4.2f%%\n", st.state, 100.0*st.ObamaProbability)
 		}
 	}
 
