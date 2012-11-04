@@ -37,6 +37,8 @@ import (
 	"time"
 )
 
+const swingStates = "FL,OH,NC,VA,WI,CO,IA,NV,NH"
+
 var (
 	acceptableSize int
 	numSimulations int
@@ -198,9 +200,19 @@ func main() {
 	fmt.Printf("There are %v days until the election.\n\n", daysUntilElection())
 
 	stateProbalities := initializeSimulations()
+
+	fmt.Println("\nSwing States:")
+	for _, st := range stateProbalities {
+		if strings.Contains(swingStates, st.state) {
+			fmt.Printf("Probability of Obama winning %v: %4.2f%%\n", st.state, st.ObamaProbability)
+		}
+	}
+
 	wins, totalVotes := runSimulations(stateProbalities)
 
-	fmt.Printf("\nObama win probability: %.2f%%. Average votes: %.2f\n", 100.0*float64(wins)/float64(numSimulations),
-		float64(totalVotes)/float64(numSimulations))
+	fmt.Printf("\nObama re-election probability: %.2f%% \n", 100.0*float64(wins)/float64(numSimulations))
+	avgVotes := float64(totalVotes) / float64(numSimulations)
+	roundedVotes := int(math.Floor(avgVotes + 0.5))
+	fmt.Printf("Average electoral votes for Obama: %v\n\n", roundedVotes)
 
 }
