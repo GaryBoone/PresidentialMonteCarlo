@@ -41,9 +41,9 @@ func (s *StateProbability) update(oPerc, rPerc, pollSize int) {
 	s.ObamaProbability = prOverX(0.50, s.obamaPerc, s.σ)
 }
 
-func (s *StateProbability) simulateElection() int {
+func (s *StateProbability) simulateElection(r *rand.Rand) int {
 	if s.N != 0 {
-		if rand.Float64() < s.ObamaProbability {
+		if r.Float64() < s.ObamaProbability {
 			return college[s.state].votes
 		}
 	} else {
