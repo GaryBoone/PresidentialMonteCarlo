@@ -31,6 +31,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"math/rand"
 	"os"
 	"runtime"
 	"strings"
@@ -110,10 +111,10 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 }
 
 // for each state, flip a coin
-func simulateObamaVotes(states []StateProbability) int {
+func simulateObamaVotes(states []StateProbability, r *rand.Rand) int {
 	votes := 0
 	for _, state := range states {
-		votes += state.simulateElection()
+		votes += state.simulateElection(r)
 	}
 	return votes
 }
@@ -156,8 +157,9 @@ type Result struct {
 
 func doSome(n int, probs []StateProbability, c chan Result) {
 	var voteSum, winSum int
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < n; i++ {
-		votes := simulateObamaVotes(probs)
+		votes := simulateObamaVotes(probs, r)
 		if votes >= 270 {
 			winSum++
 		}
