@@ -236,7 +236,8 @@ func main() {
 	flag.Parse()
 	initializeLog()
 
-	fmt.Println("Election %s Monte Carlo Simulation", electionYear)
+	fmt.Printf("Election %d Monte Carlo Simulation\n", electionYear)
+	fmt.Printf("Run date: %s\n", time.Now().Format("Monday Jan _2 2006 15:04:05"))
 	fmt.Printf("There are %v days until the election.\n\n", daysUntilElection())
 
 	stateProbalities := initializeSimulations()
