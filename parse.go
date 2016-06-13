@@ -5,8 +5,8 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"strings"
 )
 

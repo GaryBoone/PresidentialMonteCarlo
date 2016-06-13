@@ -1,6 +1,6 @@
-// 
+//
 // state.go
-// 
+//
 
 package main
 
@@ -11,20 +11,20 @@ import (
 )
 
 type StateProbability struct {
-	state            string
-	Democrat         float64
-	Republican       float64
-	N                float64
-	democratPerc     float64
-	σ                float64
+	state               string
+	Democrat            float64
+	Republican          float64
+	N                   float64
+	democratPerc        float64
+	σ                   float64
 	DemocratProbability float64
 }
 
-// Update state data with a new poll. The new N is calculated with the actual 
-// number of votes for the Democrat and Republican, not the N of the poll. The effect 
-// is to not count undecideds and Others. Essentially, the poll is reduced 
+// Update state data with a new poll. The new N is calculated with the actual
+// number of votes for the Democrat and Republican, not the N of the poll. The effect
+// is to not count undecideds and Others. Essentially, the poll is reduced
 // to a new poll between the two potential winners. In both cases, that's
-// what actually happens. Because the N is reduced, the uncertainty is 
+// what actually happens. Because the N is reduced, the uncertainty is
 // increased as it should be.
 func (s *StateProbability) update(oPerc, rPerc, pollSize int) {
 	democratVotes := float64(oPerc) * float64(pollSize) / 100.0
@@ -61,9 +61,13 @@ func (s *StateProbability) logStateProbability() {
 			s.state, s.democratPerc, int(s.N), s.σ, s.DemocratProbability)
 	} else {
 		if college[s.state].lastElection {
-			log.Printf("  %s voted Democratic in the last election. Assuming %d votes for the Democrat.\n", s.state, college[s.state].votes)
+			log.Printf(
+				"  %s voted Democratic in the last election. Assuming %d votes for the Democrat.\n",
+				s.state, college[s.state].votes)
 		} else {
-			log.Printf("  %s voted Republican in the last election. Assuming %d votes for the Republican\n", s.state, college[s.state].votes)
+			log.Printf(
+				"  %s voted Republican in the last election. Assuming %d votes for the Republican\n",
+				s.state, college[s.state].votes)
 		}
 	}
 }

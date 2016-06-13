@@ -23,7 +23,7 @@
 //
 // The state-by-state presidential polling data is provided by the Pollster API:
 //   http://elections.huffingtonpost.com/pollster/api
-// 
+//
 //   Example API call:
 //   wget -O - 'http://elections.huffingtonpost.com/pollster/api/polls.json?topic=2016-president&state=OH'
 //
@@ -45,20 +45,20 @@ import (
 )
 
 const (
-	democraticCandidate = "Clinton"// "Obama"
-	republicanCandidate = "Trump"  // "Romney"
-	electionYear = 2016 // 2012
-	electionDay = 8 // 6
-	swingStates = "CO,FL,IA,NC,NH,NV,OH,PA,VA,WI"
+	democraticCandidate = "Clinton" // "Obama"
+	republicanCandidate = "Trump"   // "Romney"
+	electionYear        = 2016      // 2012
+	electionDay         = 8         // 6
+	swingStates         = "CO,FL,IA,NC,NH,NV,OH,PA,VA,WI"
 )
 
 var (
 	acceptableSize int
 	numSimulations int
 	min_σ          float64
-	pollTopic = fmt.Sprintf("%d-president", electionYear)
-	loc, _ = time.LoadLocation("America/New_York")
-	electionDate = time.Date(electionYear, time.November, electionDay, 0, 0, 0, 0, loc)
+	pollTopic      = fmt.Sprintf("%d-president", electionYear)
+	loc, _         = time.LoadLocation("America/New_York")
+	electionDate   = time.Date(electionYear, time.November, electionDay, 0, 0, 0, 0, loc)
 )
 
 func init() {
@@ -141,7 +141,7 @@ func loadProbability(state string) StateProbability {
 	msg := ""
 	if strings.Contains(swingStates, state) {
 		msg = ", a swing state"
-	}	
+	}
 	log.Printf("Found %v polls in %v%s.\n", len(polls), state, msg)
 
 	prob := loadStateData(state, polls)
@@ -216,14 +216,16 @@ func reportProbalities(probs []StateProbability) {
 	numStatesWithoutPolls := 0
 	fmt.Println("\nSwing States:")
 	for _, st := range probs {
-		if st.N==0 {
+		if st.N == 0 {
 			numStatesWithoutPolls++
 			if strings.Contains(swingStates, st.state) {
-				fmt.Printf("%s has no polls yet, so it is assigned to %s based on %d outcome.\n", st.state, democraticCandidate, electionYear-4)
+				fmt.Printf("%s has no polls yet, so it is assigned to %s based on %d outcome.\n",
+					st.state, democraticCandidate, electionYear-4)
 			}
 		} else {
 			if strings.Contains(swingStates, st.state) {
-				fmt.Printf("Probability of %s winning %v: %4.2f%%\n", democraticCandidate, st.state, 100.0*st.DemocratProbability)
+				fmt.Printf("Probability of %s winning %v: %4.2f%%\n", democraticCandidate, st.state,
+					100.0*st.DemocratProbability)
 			}
 		}
 	}
@@ -242,11 +244,11 @@ func main() {
 
 	wins, totalVotes := runSimulations(stateProbalities)
 
-	demWinProb := 100.0*float64(wins)/float64(numSimulations)
+	demWinProb := 100.0 * float64(wins) / float64(numSimulations)
 	fmt.Printf("\n%s election probability: %.2f%%\n", democraticCandidate, demWinProb)
-	fmt.Printf("%s election probability: %.2f%%\n", republicanCandidate, 100.0 - demWinProb)
+	fmt.Printf("%s election probability: %.2f%%\n", republicanCandidate, 100.0-demWinProb)
 	avgVotes := float64(totalVotes) / float64(numSimulations)
 	roundedVotes := int(math.Floor(avgVotes + 0.5))
 	fmt.Printf("Average electoral votes for %s: %v\n", democraticCandidate, roundedVotes)
-	fmt.Printf("Average electoral votes for %s: %v\n", republicanCandidate, 538 - roundedVotes)
+	fmt.Printf("Average electoral votes for %s: %v\n", republicanCandidate, 538-roundedVotes)
 }

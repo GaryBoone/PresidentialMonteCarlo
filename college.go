@@ -1,6 +1,6 @@
 //
 // college.go
-// 
+//
 
 package main
 

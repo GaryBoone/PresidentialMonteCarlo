@@ -60,7 +60,7 @@ type Poll struct {
 	Questions     []Question
 }
 
-// readPollingApi reads the data from the Pollster API. 
+// readPollingApi reads the data from the Pollster API.
 func readPollingApi(topic, state string) []byte {
 	url := fmt.Sprintf(apiUrl, topic, state)
 	resp, err := http.Get(url)
