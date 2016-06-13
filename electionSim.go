@@ -239,7 +239,7 @@ func main() {
 
 	stateProbalities := initializeSimulations()
 	reportProbalities(stateProbalities)
-	
+
 	wins, totalVotes := runSimulations(stateProbalities)
 
 	demWinProb := 100.0*float64(wins)/float64(numSimulations)
