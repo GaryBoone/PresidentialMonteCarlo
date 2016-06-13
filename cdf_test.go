@@ -1,7 +1,7 @@
 //
 // cdf_test.go
 //
-// go test election2012.go state.go api.go cdf.go parse.go college.go cdf_test.go
+// $ go test github.com/GaryBoone/PresidentialMonteCarlo
 //
 
 package main

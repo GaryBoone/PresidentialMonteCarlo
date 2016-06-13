@@ -13,7 +13,7 @@ import (
 )
 
 // sort polls by most recent first so we use the most recent data
-const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?sort=updated&topic=2012-president&state="
+const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?sort=updated&topic=%s&state=%s"
 
 type Responses struct {
 	Choice     *string
@@ -61,8 +61,9 @@ type Poll struct {
 }
 
 // readPollingApi reads the data from the Pollster API. 
-func readPollingApi(state string) []byte {
-	resp, err := http.Get(apiUrl + state)
+func readPollingApi(topic, state string) []byte {
+	url := fmt.Sprintf(apiUrl, topic, state)
+	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}

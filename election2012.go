@@ -1,25 +1,31 @@
 //
-// election2012.go
+// election.go
 //
-// An electoral college Monte Carlo simulation based on 2012 presidential polling.
+// An electoral college Monte Carlo simulation based on 2016 presidential polling.
 //
-// To run:
-//   $ go run election2012.go state.go api.go cdf.go parse.go college.go
-//
+// To build and run:
+//     $ cd $GOPATH
+//     $ mkdir -p src/github.com/GaryBoone/
+//     $ cd src/github.com/GaryBoone/
+//     $ git clone https://github.com/GaryBoone/PresidentialMonteCarlo
+//     $ cd ../../..
+//     $ go install github.com/GaryBoone/PresidentialMonteCarlo
+//     $ bin/PresidentialMonteCarlo//
 // Author:     Gary Boone     gary.boone@gmail.com
-// History:    2012-09-17     • initial version
-//             2012-09-21     • cleanup, upload to github
+// History:
+//             2012-09-25     • simulations in parallel
 //             2012-09-24     • minimum σ
 //                            • command line parameters
 //                            • days until election countdown
-//             2012-09-25     • simulations in parallel
+//             2012-09-21     • cleanup, upload to github
+//             2012-09-17     • initial version
 // Notes:
 //
 // The state-by-state presidential polling data is provided by the Pollster API:
 //   http://elections.huffingtonpost.com/pollster/api
 // 
 //   Example API call:
-//   wget -O - 'http://elections.huffingtonpost.com/pollster/api/polls.json?topic=2012-president&state=OH'
+//   wget -O - 'http://elections.huffingtonpost.com/pollster/api/polls.json?topic=2016-president&state=OH'
 //
 // Read the logfile for details.
 //
@@ -38,12 +44,21 @@ import (
 	"time"
 )
 
-const swingStates = "FL,OH,NC,VA,WI,CO,IA,NV,NH"
+const (
+	democraticCandidate = "Clinton"// "Obama"
+	republicanCandidate = "Trump"  // "Romney"
+	electionYear = 2016 // 2012
+	electionDay = 8 // 6
+	swingStates = "CO,FL,IA,NC,NH,NV,OH,PA,VA,WI"
+)
 
 var (
 	acceptableSize int
 	numSimulations int
 	min_σ          float64
+	pollTopic = fmt.Sprintf("%d-president", electionYear)
+	loc, _ = time.LoadLocation("America/New_York")
+	electionDate = time.Date(electionYear, time.November, electionDay, 0, 0, 0, 0, loc)
 )
 
 func init() {
@@ -92,17 +107,17 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 			continue
 		}
 
-		var obama, romney, size int
-		obama, romney, size = parsePoll(state, poll)
-		if obama == 0 || romney == 0 {
-			log.Printf("  Missing value (Obama=%v, Romney=%v) for %v state poll by '%v'. Skipping.\n",
-				obama, romney, state, *poll.Pollster)
+		var democrat, republican, size int
+		democrat, republican, size = parsePoll(state, poll, pollTopic)
+		if democrat == 0 || republican == 0 {
+			log.Printf("  Missing value (Democrat=%v, Republican=%v) for %v state poll by '%v'. Skipping.\n",
+				democrat, republican, state, *poll.Pollster)
 			continue
 		}
 
-		log.Printf("  adding %-30s %10s : O(%v), R(%v), N(%v)\n",
-			truncateString(pollster, 30), date[:10], obama, romney, size)
-		prob.update(obama, romney, size)
+		log.Printf("  adding %-30s %10s : Democrat(%v), Republican(%v), poll size(%v)\n",
+			truncateString(pollster, 30), date[:10], democrat, republican, size)
+		prob.update(democrat, republican, size)
 		if prob.N > float64(acceptableSize) {
 			return
 		}
@@ -120,9 +135,15 @@ func simulateObamaVotes(states []StateProbability, r *rand.Rand) int {
 }
 
 func loadProbability(state string) StateProbability {
-	body := readPollingApi(state)
+	body := readPollingApi(pollTopic, state)
 	polls := parseJson(body)
-	log.Printf("Found %v polls in %v.\n", len(polls), state)
+
+	msg := ""
+	if strings.Contains(swingStates, state) {
+		msg = ", a swing state"
+	}	
+	log.Printf("Found %v polls in %v%s.\n", len(polls), state, msg)
+
 	prob := loadStateData(state, polls)
 	prob.logStateProbability()
 	return prob
@@ -142,7 +163,7 @@ func initializeSimulations() []StateProbability {
 		prob := <-results
 		stateProbabilities[i] = prob
 		if i == 0 {
-			fmt.Printf("Collecting survey data for the great state of %v", prob.state)
+			fmt.Printf("Collecting survey data for the great states of %v", prob.state)
 		} else {
 			fmt.Printf(", %v", prob.state)
 		}
@@ -186,35 +207,46 @@ func runSimulations(probs []StateProbability) (int, int) {
 	return wins, votes
 }
 
-// Let's say election day begins on midnight Eastern Time on Nov 6, 2012
 func daysUntilElection() int {
 	now := time.Now()
-	// Midnight Nov 6 is Eastern Standard Time, not DST, so 5 hours behind UTC
-	electionDay := time.Date(2012, time.November, 6, 5, 0, 0, 0, time.UTC)
-	return int(math.Ceil(float64(electionDay.Sub(now)) / (24 * 60 * 60 * 1000000000.0)))
+	return int(math.Ceil(float64(electionDate.Sub(now)) / (24 * 60 * 60 * 1000000000.0)))
+}
+
+func reportProbalities(probs []StateProbability) {
+	numStatesWithoutPolls := 0
+	fmt.Println("\nSwing States:")
+	for _, st := range probs {
+		if st.N==0 {
+			numStatesWithoutPolls++
+			if strings.Contains(swingStates, st.state) {
+				fmt.Printf("%s has no polls yet, so it is assigned to %s based on %d outcome.\n", st.state, democraticCandidate, electionYear-4)
+			}
+		} else {
+			if strings.Contains(swingStates, st.state) {
+				fmt.Printf("Probability of %s winning %v: %4.2f%%\n", democraticCandidate, st.state, 100.0*st.DemocratProbability)
+			}
+		}
+	}
+	fmt.Printf("%d states have no polls, so were assigned %d outcomes\n", numStatesWithoutPolls, electionYear-4)
 }
 
 func main() {
 	flag.Parse()
 	initializeLog()
 
-	fmt.Println("Election 2012 Monte Carlo Simulation")
+	fmt.Println("Election %s Monte Carlo Simulation", electionYear)
 	fmt.Printf("There are %v days until the election.\n\n", daysUntilElection())
 
 	stateProbalities := initializeSimulations()
-
-	fmt.Println("\nSwing States:")
-	for _, st := range stateProbalities {
-		if strings.Contains(swingStates, st.state) {
-			fmt.Printf("Probability of Obama winning %v: %4.2f%%\n", st.state, 100.0*st.ObamaProbability)
-		}
-	}
-
+	reportProbalities(stateProbalities)
+	
 	wins, totalVotes := runSimulations(stateProbalities)
 
-	fmt.Printf("\nObama re-election probability: %.2f%% \n", 100.0*float64(wins)/float64(numSimulations))
+	demWinProb := 100.0*float64(wins)/float64(numSimulations)
+	fmt.Printf("\n%s election probability: %.2f%%\n", democraticCandidate, demWinProb)
+	fmt.Printf("%s election probability: %.2f%%\n", republicanCandidate, 100.0 - demWinProb)
 	avgVotes := float64(totalVotes) / float64(numSimulations)
 	roundedVotes := int(math.Floor(avgVotes + 0.5))
-	fmt.Printf("Average electoral votes for Obama: %v\n\n", roundedVotes)
-
+	fmt.Printf("Average electoral votes for %s: %v\n", democraticCandidate, roundedVotes)
+	fmt.Printf("Average electoral votes for %s: %v\n", republicanCandidate, 538 - roundedVotes)
 }
