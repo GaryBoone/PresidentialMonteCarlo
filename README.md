@@ -18,8 +18,7 @@ It doesn't have to be this way. It could be that the overall simulation of combi
  
 ## Update ##
 
-This code was originally written for the 2012 Obama/Romney election. It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in early June. No matter. Clinton will win this election as surely as the sun will rise on November 9th, 2016. This simulation shows why.
-
+This code was originally written for the 2012 Obama/Romney election. It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in early June.
 
 ## Usage ##
 
