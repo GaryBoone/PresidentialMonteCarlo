@@ -3,6 +3,7 @@ PresidentialMonteCarlo is a Monte Carlo simulator of the 2016 presidential elect
 This code uses a technique called Monte Carlo analysis which is a method for calculating probabilities when no simpler, closed-form, formula is known. It allows us to calculate probabilities for complex systems such as presidential elections. 
 
 Specifically, the process is:
+
 * It reads polling data from the Huffington Post API for each state.
 * It transforms the polling data into probabilities.
 * It assumes that where there's no polling data, the state will vote as it did in 2012.
