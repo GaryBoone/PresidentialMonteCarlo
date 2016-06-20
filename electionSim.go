@@ -12,16 +12,9 @@
 //     $ go install github.com/GaryBoone/PresidentialMonteCarlo
 //     $ bin/PresidentialMonteCarlo//
 // Author:     Gary Boone     gary.boone@gmail.com
-// History:
-//             2012-09-25     • simulations in parallel
-//             2012-09-24     • minimum σ
-//                            • command line parameters
-//                            • days until election countdown
-//             2012-09-21     • cleanup, upload to github
-//             2012-09-17     • initial version
+// History:    see git log
 // Notes:
-//
-// The state-by-state presidential polling data is provided by the Pollster API:
+//   The state-by-state presidential polling data is provided by the Pollster API:
 //   http://elections.huffingtonpost.com/pollster/api
 //
 //   Example API call:
@@ -45,20 +38,22 @@ import (
 )
 
 const (
-	democraticCandidate = "Clinton" // "Obama"
-	republicanCandidate = "Trump"   // "Romney"
-	electionYear        = 2016      // 2012
-	electionDay         = 8         // 6
+	democraticCandidate = "Clinton" // 2012: "Obama"
+	republicanCandidate = "Trump"   // 2012: "Romney"
+	electionYear        = 2016      // 2012: 2012
+	electionDay         = 8         // 2012: 6
 	swingStates         = "CO,FL,IA,NC,NH,NV,OH,PA,VA,WI"
 )
 
 var (
-	acceptableSize int
-	numSimulations int
-	min_σ          float64
-	pollTopic      = fmt.Sprintf("%d-president", electionYear)
-	loc, _         = time.LoadLocation("America/New_York")
-	electionDate   = time.Date(electionYear, time.November, electionDay, 0, 0, 0, 0, loc)
+	acceptableSize      int
+	numSimulations      int
+	min_σ               float64
+	pollTopic           = fmt.Sprintf("%d-president", electionYear)
+	loc, _              = time.LoadLocation("America/New_York")
+	electionDate        = time.Date(electionYear, time.November, electionDay, 0, 0, 0, 0, loc)
+	bannedPollstersList = []string{"Research 2000", "TCJ Research", "Strategic Vision, LLC",
+		"Pharos Research Group", "Overtime Politics"}
 )
 
 func init() {
@@ -94,6 +89,18 @@ func truncateString(inStr string, length int) string {
 	return inStr[:length-3] + "..."
 }
 
+// Skip systemically biased polls.
+// Banned pollsters are defined by http://projects.fivethirtyeight.com/pollster-ratings/
+func bannedPollster(pollster string) bool {
+	for _, bannedPollsters := range bannedPollstersList {
+		if strings.EqualFold(pollster, bannedPollsters) {
+			log.Printf("Dropping banned pollster: %s.\n", pollster)
+			return true
+		}
+	}
+	return false
+}
+
 func loadStateData(state string, polls []Poll) (prob StateProbability) {
 	prob.state = state
 	for _, poll := range polls {
@@ -101,9 +108,7 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 		pollster := parsePollster(poll)
 		date := parseDateAsString(poll)
 
-		// skip systemically biased polls
-		// http://fivethirtyeight.blogs.nytimes.com/2010/11/04/rasmussen-polls-were-biased-and-inaccurate-quinnipiac-surveyusa-performed-strongly/
-		if strings.EqualFold(pollster, "Rasmussen") {
+		if bannedPollster(pollster) {
 			continue
 		}
 
