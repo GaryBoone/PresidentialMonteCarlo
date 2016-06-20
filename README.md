@@ -22,6 +22,9 @@ This code was originally written for the 2012 Obama/Romney election. It predicte
 
 It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in mid June.
 
+## Explanation ## 
+An essay explaining how this simulation provides certainty that Clinton will win is [here](http://www.garyboone.com/2016/06/hillary-clinton-will-be-next-president.html).
+
 ## Usage ##
 
 Assuming a standard Go development directory layout, to build:
@@ -81,6 +84,7 @@ Third, while any given poll may have a margin of error of say 4%, we can combine
 
 Finally, realize that there is more certainty available in the data than is described in the polls. That's because there are only so many ways that the electoral college can add up to a win for either candidate. For example, CA, HI, and NY will almost certainly vote for Clinton; no need to poll in those states. That's why we talk about swing states; they can change the outcome. But there are only a limited number of ways the swing states can combine to a victory for one candidate or the other. As it turns out, the current polling makes these combinations favor Clinton. It's nearly impossible for swing states to combine in ways that add up to a Trump win.
 
+For an expanded explanation, see [here](http://www.garyboone.com/2016/06/hillary-clinton-will-be-next-president.html).
 
 ## Poll Data Source ##
 
