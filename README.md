@@ -14,7 +14,7 @@ The percentage of these wins is then the final probability of the candidate winn
 
 What Monte Carlo simulation does is allow you to find certainty (eg, 92% certainty) from many uncertain components, such as close state polls. 
 
-It doesn't have to be this way. It could be that the overall simulation of combining uncertain components also leads to uncertain outcomes. But what's so interesting in the case of the presidential election is that the simulation shows that the outcome of the 2015 Presidential is certain. Hillary Clinton will win.
+It doesn't have to be this way. It could be that the overall simulation of combining uncertain components also leads to uncertain outcomes. But what's so interesting in the case of the presidential election is that the simulation shows that the outcome of the 2016 Presidential is certain. Hillary Clinton will win.
  
 ## Update ##
 
