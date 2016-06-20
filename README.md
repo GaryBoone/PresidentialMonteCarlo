@@ -18,7 +18,7 @@ It doesn't have to be this way. It could be that the overall simulation of combi
  
 ## Update ##
 
-This code was originally written for the 2012 Obama/Romney election. It predicted a 99.86% probability of 314 Electoral College votes for Obama in 2012. He actually received 332. The simulation was wrong about Indiana (50.0% R / 49.1% O, 11 votes) and Florida (54.3% O / 43.8% R, 29 votes).
+This code was originally written for the 2012 Obama/Romney election. It predicted a 99.86% probability of Obama winning. It predicted 314 Electoral College votes for Obama. He actually received 332. The simulation was wrong about Indiana (actually 54.3% Romney / 43.8% Obama, 11 votes) and Florida (actually 50.0% Obama / 49.1% Romney, 29 votes).
 
 It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in mid June.
 
