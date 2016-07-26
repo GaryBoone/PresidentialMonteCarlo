@@ -26,7 +26,7 @@ type StateProbability struct {
 // to a new poll between the two potential winners. In both cases, that's
 // what actually happens. Because the N is reduced, the uncertainty is
 // increased as it should be.
-func (s *StateProbability) update(oPerc, rPerc, pollSize int) {
+func (s *StateProbability) update(oPerc, rPerc float64, pollSize int) {
 	democratVotes := float64(oPerc) * float64(pollSize) / 100.0
 	republicanVotes := float64(rPerc) * float64(pollSize) / 100.0
 	s.Democrat += democratVotes

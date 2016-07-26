@@ -112,7 +112,8 @@ func loadStateData(state string, polls []Poll) (prob StateProbability) {
 			continue
 		}
 
-		var democrat, republican, size int
+		var democrat, republican float64
+		var size int
 		democrat, republican, size = parsePoll(state, poll, pollTopic)
 		if democrat == 0 || republican == 0 {
 			log.Printf("  Missing value (Democrat=%v, Republican=%v) for %v state poll by '%v'. Skipping.\n",

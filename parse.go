@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func parseResponses(state string, poll Poll, responses []Responses) (democrat, republican int) {
+func parseResponses(state string, poll Poll, responses []Responses) (democrat, republican float64) {
 	for _, resp := range responses {
 		if resp.Choice == nil {
 			log.Printf("  No Choice for %v state poll by '%v'. Skipping.\n",
@@ -32,7 +32,7 @@ func parseResponses(state string, poll Poll, responses []Responses) (democrat, r
 	return
 }
 
-func parseSubpopulation(state string, poll Poll, sub Subpopulations) (democrat, republican, size int) {
+func parseSubpopulation(state string, poll Poll, sub Subpopulations) (democrat, republican float64, size int) {
 	if sub.Observations == nil {
 		log.Printf("  No N for %v state poll by '%v'. Skipping.\n",
 			state, *poll.Pollster)
@@ -60,7 +60,7 @@ func parseDateAsString(poll Poll) string {
 	return date
 }
 
-func parsePoll(state string, poll Poll, topic string) (democrat, republican, size int) {
+func parsePoll(state string, poll Poll, topic string) (democrat, republican float64, size int) {
 	for _, question := range poll.Questions {
 		if question.Topic != nil && strings.EqualFold(*question.Topic, topic) {
 			// given multiple subpopulations, prefer likely voters

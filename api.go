@@ -17,7 +17,7 @@ const apiUrl = "http://elections.huffingtonpost.com/pollster/api/polls.json?sort
 
 type Responses struct {
 	Choice     *string
-	Value      *int
+	Value      *float64
 	First_name *string
 	Last_name  *string
 	Party      *string
