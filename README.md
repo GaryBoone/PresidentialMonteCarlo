@@ -16,13 +16,14 @@ What Monte Carlo simulation does is allow you to find certainty (eg, 92% certain
 
 It doesn't have to be this way. It could be that the overall simulation of combining uncertain components also leads to uncertain outcomes. But what's so interesting in the case of the presidential election is that the simulation shows that the outcome of the 2016 Presidential is certain. Hillary Clinton will win.
  
-## Update ##
+## Update, 2016 ##
 
 This code was originally written for the 2012 Obama/Romney election. It predicted a 99.86% probability of Obama winning. It predicted 314 Electoral College votes for Obama. He actually received 332. The simulation was wrong about Indiana (actually 54.3% Romney / 43.8% Obama, 11 votes) and Florida (actually 50.0% Obama / 49.1% Romney, 29 votes).
 
 It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in mid June.
 
 ## Explanation ## 
+
 An essay explaining how this simulation provides certainty that Clinton will win is [here](http://www.garyboone.com/2016/06/hillary-clinton-will-be-next-president.html).
 
 ## Usage ##
