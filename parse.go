@@ -62,7 +62,7 @@ func parseDateAsString(poll Poll) string {
 
 func parsePoll(state string, poll Poll, topic string) (democrat, republican float64, size int) {
 	for _, question := range poll.Questions {
-		if question.Topic != nil && strings.EqualFold(*question.Topic, topic) {
+		if question.Topic != nil && strings.EqualFold(*question.Topic, topic) && strings.EqualFold(*question.State, state) {
 			// given multiple subpopulations, prefer likely voters
 			switch len(question.Subpopulations) {
 			case 1:
