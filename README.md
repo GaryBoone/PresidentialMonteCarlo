@@ -22,7 +22,7 @@ This code was originally written for the 2012 Obama/Romney election. It predicte
 
 It has now been updated for the 2016 presidential election. It assumes Clinton and Trump are the Democratic and Republican candidates, although that isn't official as of this writing in mid June.
 
-## Explanation ##
+## Explanation ## 
 
 An essay explaining how this simulation provides certainty that Clinton will win is [here](http://www.garyboone.com/2016/06/hillary-clinton-will-be-next-president.html).
 
